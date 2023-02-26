@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.team3602.robot.autos.AutoBalance;
 import frc.team3602.robot.autos.AutonCommands;
 import frc.team3602.robot.commands.*;
 import frc.team3602.robot.subsystems.*;
@@ -21,8 +20,10 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-  private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton zeroGyro =
+      new JoystickButton(driver, XboxController.Button.kY.value);
+  private final JoystickButton robotCentric =
+      new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
   /* Subsystems */
   public static final Swerve s_Swerve = new Swerve();
@@ -32,13 +33,8 @@ public class RobotContainer {
   SendableChooser<Command> sendableChooser = new SendableChooser<>();
 
   public RobotContainer() {
-    s_Swerve.setDefaultCommand(
-        new TeleopSwerve(
-            s_Swerve,
-            () -> -driver.getRawAxis(translationAxis),
-            () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis),
-            () -> true));
+    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> -driver.getRawAxis(translationAxis),
+        () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> true));
 
     configureButtonBindings();
     configAuton();
@@ -47,17 +43,35 @@ public class RobotContainer {
   private void configureButtonBindings() {
     zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
-    // Arm Up 
-    new JoystickButton(driver, XboxController.Button.kX.value).whileTrue(armSubsys.moveArmAngle(() -> 1.0)).whileFalse(armSubsys.stopArmAngle());
-    
-    // Arm Down
-    new JoystickButton(driver, XboxController.Button.kY.value).whileTrue(armSubsys.moveArmAngle(() -> -1.0)).whileFalse(armSubsys.stopArmAngle());
+    new JoystickButton(driver, XboxController.Button.kX.value)
+        .whileTrue(armSubsys.moveArmAngle(() -> 50.0)).whileFalse(armSubsys.stopArmAngle());
 
-    // Gripper Open
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whileTrue(armSubsys.moveGripper(() -> 0.50)).whileFalse(armSubsys.stopGripper());
+    new JoystickButton(driver, XboxController.Button.kY.value)
+        .whileTrue(armSubsys.moveArmAngle(() -> -50.0)).whileFalse(armSubsys.stopArmAngle());
 
-    // Gripper Close
-    new JoystickButton(driver, XboxController.Button.kRightBumper.value).whileTrue(armSubsys.moveGripper(() -> -0.50)).whileFalse(armSubsys.stopGripper());
+    // Open Gripper
+    new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
+        .whileTrue(armSubsys.openGripper());
+
+    // Close Gripper
+    new JoystickButton(driver, XboxController.Button.kRightBumper.value)
+        .whileTrue(armSubsys.closeGripper());
+
+    // // Arm Up
+    // new JoystickButton(driver, XboxController.Button.kX.value)
+    // .whileTrue(armSubsys.moveArmAngle(() -> 0.50)).whileFalse(armSubsys.stopArmAngle());
+
+    // // Arm Down
+    // new JoystickButton(driver, XboxController.Button.kY.value)
+    // .whileTrue(armSubsys.moveArmAngle(() -> -0.50)).whileFalse(armSubsys.stopArmAngle());
+
+    // // Arm Extend
+    // new JoystickButton(driver, XboxController.Button.kA.value)
+    // .whileTrue(armSubsys.moveArmExtend(() -> 0.25)).whileFalse(armSubsys.stopArmExtend());
+
+    // // Arm Extend
+    // new JoystickButton(driver, XboxController.Button.kB.value)
+    // .whileTrue(armSubsys.moveArmExtend(() -> -0.25)).whileFalse(armSubsys.stopArmExtend());
   }
 
   private void configAuton() {
@@ -68,6 +82,5 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return sendableChooser.getSelected();
-    // return new exampleAuto(s_Swerve);
   }
 }

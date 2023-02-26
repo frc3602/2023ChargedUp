@@ -159,19 +159,24 @@ public final class Constants {
   public static final class ArmConstants {
     public static final int armMotorCANID = 16;
     public static final int armExtendCANID = 15;
-    public static final int gripperCANID = 14;
 
     public static final double armZeroAngle = 0.0; // TODO: Set zero angle later.
 
-    public static final double armGearRatio = (353.75 / 1.0);
+    public static final double armAngleGearRatio = (125.0 / 1.0);
+    // public static final double armAngleGearRatio = (353.75 / 1.0);
+    public static final double armExtendGearRatio = (60.0 / 1.0);
 
-    public static final double armP = 0.0;
-    public static final double armI = 0.0;
-    public static final double armD = 0.0;
+    public static final double armAngleP = 0.05;
+    public static final double armAngleI = 0.0;
+    public static final double armAngleD = 0.0;
 
-    public static final double armKS = 0.0;
+    public static final double armKS = 3.0;
     public static final double armKG = 0.70;
     public static final double armKV = 1.89;
     public static final double armKA = 0.03;
+
+    public static final double armExtendP = 0.05;
+    public static final double armExtendI = 0.0;
+    public static final double armExtendD = 0.0;
   }
 }
