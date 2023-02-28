@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
@@ -22,6 +23,8 @@ public class ArmSubsystem extends SubsystemBase {
       new CANSparkMax(ArmConstants.armMotorCANID, MotorType.kBrushless);
   private final CANSparkMax armExtendMotor =
       new CANSparkMax(ArmConstants.armExtendCANID, MotorType.kBrushless);
+  private final CANSparkMax armWristMotor =
+      new CANSparkMax(ArmConstants.armWristCANID, MotorType.kBrushless);
 
   private final Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
   private final DoubleSolenoid gripperSolenoid =
@@ -29,6 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final RelativeEncoder armAngleEncoder = armMotor.getEncoder();
   private final RelativeEncoder armExtendEncoder = armExtendMotor.getEncoder();
+  private final RelativeEncoder armWristEncoder = armWristMotor.getEncoder();
 
   public final DigitalInput armAngleTopLimit = new DigitalInput(0);
 
@@ -38,61 +42,94 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.armKG, ArmConstants.armKV, ArmConstants.armKA);
   private final PIDController armExtendPIDController =
       new PIDController(ArmConstants.armExtendP, ArmConstants.armExtendI, ArmConstants.armExtendD);
+  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(6.50, 0.48, 1.22, 0.02);
 
   public ArmSubsystem() {
+    resetArmAngleEncoder();
+    // resetArmExtendEncoder();
+    resetArmWristEncoder();
+
     configArmSubsys();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Arm Angle Top", armAngleTopLimit.get());
+    // if (!armAngleTopLimit.get()) {
+    // resetArmAngleEncoder();
+    // }
+
+    // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
+    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    // SmartDashboard.putBoolean("Arm Angle Limit", armAngleTopLimit.get());
   }
 
-  public double getArmAngle() {
-    return armAngleEncoder.getPosition() - ArmConstants.armZeroAngle;
+  public double getArmAngleEncoder() {
+    return armAngleEncoder.getPosition();
   }
 
-  public double getArmExtend() {
+  public double getArmExtendEncoder() {
     return armExtendEncoder.getPosition();
   }
 
-  // public CommandBase moveArmAngle(DoubleSupplier angle) {
-  // return run(() -> armMotor
-  // .setVoltage(armAnglePIDController.calculate(getArmAngle(), angle.getAsDouble())
-  // + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0)));
-  // }
+  public double getArmWristEncoder() {
+    return armWristEncoder.getPosition();
+  }
 
+  public void resetArmAngleEncoder() {
+    armAngleEncoder.setPosition(0.0);
+  }
+
+  public void resetArmExtendEncoder() {
+    armExtendEncoder.setPosition(0.0);
+  }
+
+  public void resetArmWristEncoder() {
+    armWristEncoder.setPosition(0.0);
+  }
+
+  // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/sensors/limit-switch.html
   public CommandBase moveArmAngle(DoubleSupplier angle) {
-    return run(() -> {
-      if (angle.getAsDouble() > 0) {
+    return runOnce(() -> {
+      if (angle.getAsDouble() > 0.0) {
         if (!armAngleTopLimit.get()) {
           armMotor.set(0.0);
         } else {
-          armMotor.setVoltage(armAnglePIDController.calculate(getArmAngle(), angle.getAsDouble())
-              + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
+          armMotor
+              .setVoltage(armAnglePIDController.calculate(getArmAngleEncoder(), angle.getAsDouble())
+                  + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
         }
       } else {
-        armMotor.setVoltage(armAnglePIDController.calculate(getArmAngle(), angle.getAsDouble())
-            + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
+        armMotor
+            .setVoltage(armAnglePIDController.calculate(getArmAngleEncoder(), angle.getAsDouble())
+                + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
       }
     });
   }
 
-  public CommandBase moveArmExtendPID(DoubleSupplier inches) {
-    return run(() -> armExtendMotor
-        .set(armExtendPIDController.calculate(getArmExtend(), inches.getAsDouble())));
+  public CommandBase moveArmExtend(DoubleSupplier inches) {
+    return runOnce(() -> {
+      armExtendMotor
+          .set(armExtendPIDController.calculate(getArmExtendEncoder(), inches.getAsDouble()));
+    });
   }
 
-  public CommandBase moveArmExtend(DoubleSupplier speed) {
-    return run(() -> armExtendMotor.set(speed.getAsDouble()));
+  public CommandBase moveWristAngle(DoubleSupplier angle) {
+    return runOnce(() -> {
+      armWristMotor
+          .setVoltage(armWristFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
+    });
   }
 
   public CommandBase stopArmAngle() {
-    return run(() -> armMotor.set(0.0));
+    return runOnce(() -> armMotor.set(0.0));
   }
 
   public CommandBase stopArmExtend() {
-    return run(() -> armExtendMotor.set(0.0));
+    return runOnce(() -> armExtendMotor.set(0.0));
+  }
+
+  public CommandBase stopArmWrist() {
+    return runOnce(() -> armWristMotor.set(0.0));
   }
 
   public CommandBase openGripper() {
@@ -106,16 +143,15 @@ public class ArmSubsystem extends SubsystemBase {
   private void configArmSubsys() {
     armMotor.setIdleMode(IdleMode.kBrake);
     armExtendMotor.setIdleMode(IdleMode.kBrake);
+    armWristMotor.setIdleMode(IdleMode.kBrake);
 
     armMotor.setInverted(true);
 
     compressor.enableDigital();
     gripperSolenoid.set(Value.kForward);
 
-    armAngleEncoder.setPosition(0.0);
-    armExtendEncoder.setPosition(0.0);
-
     armAngleEncoder.setPositionConversionFactor(360.0 / ArmConstants.armAngleGearRatio);
     armExtendEncoder.setPositionConversionFactor((Math.PI * 2.0) / ArmConstants.armExtendGearRatio);
+    armWristEncoder.setPositionConversionFactor(360.0 / ArmConstants.armWristGearRatio);
   }
 }

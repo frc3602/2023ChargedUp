@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.team3602.robot.autos.AutonCommands;
 import frc.team3602.robot.commands.*;
@@ -20,13 +19,13 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  private final JoystickButton zeroGyro =
-      new JoystickButton(driver, XboxController.Button.kY.value);
-  private final JoystickButton robotCentric =
-      new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  // private final JoystickButton zeroGyro =
+  // new JoystickButton(driver, XboxController.Button.kY.value);
+  // private final JoystickButton robotCentric =
+  // new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
   /* Subsystems */
-  public static final Swerve s_Swerve = new Swerve();
+  private final Swerve s_Swerve = new Swerve();
   private final ArmSubsystem armSubsys = new ArmSubsystem();
 
   /* Autonomous */
@@ -41,13 +40,16 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+
+    new JoystickButton(driver, XboxController.Button.kA.value)
+        .whileTrue(armSubsys.moveWristAngle(() -> 15.0)).whileFalse(armSubsys.stopArmWrist());
 
     new JoystickButton(driver, XboxController.Button.kX.value)
-        .whileTrue(armSubsys.moveArmAngle(() -> 50.0)).whileFalse(armSubsys.stopArmAngle());
+        .whileTrue(armSubsys.moveArmAngle(() -> 6.0)).whileFalse(armSubsys.stopArmAngle());
 
     new JoystickButton(driver, XboxController.Button.kY.value)
-        .whileTrue(armSubsys.moveArmAngle(() -> -50.0)).whileFalse(armSubsys.stopArmAngle());
+        .whileTrue(armSubsys.moveArmExtend(() -> 35.0)).whileFalse(armSubsys.stopArmExtend());
 
     // Open Gripper
     new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
