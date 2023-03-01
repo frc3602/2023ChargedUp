@@ -1,5 +1,6 @@
 package frc.team3602.robot.subsystems;
 
+import frc.team3602.lib.math.MathBruh;
 import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -14,7 +15,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team3602.robot.Constants.ArmConstants;
 
@@ -46,7 +50,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     resetArmAngleEncoder();
-    // resetArmExtendEncoder();
+    resetArmExtendEncoder();
     resetArmWristEncoder();
 
     configArmSubsys();
@@ -58,9 +62,12 @@ public class ArmSubsystem extends SubsystemBase {
     // resetArmAngleEncoder();
     // }
 
-    // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
+    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
+    SmartDashboard.putBoolean("Stuff", MathBruh.between((int)getArmAngleEncoder(), -21, -30));
     // SmartDashboard.putBoolean("Arm Angle Limit", armAngleTopLimit.get());
+    // SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
   public double getArmAngleEncoder() {
@@ -87,9 +94,17 @@ public class ArmSubsystem extends SubsystemBase {
     armWristEncoder.setPosition(0.0);
   }
 
+  public CommandBase checkArmAngleLimit() {
+    return run(() -> {
+      if (!armAngleTopLimit.get()) {
+        resetArmAngleEncoder();
+      }
+    });
+  }
+
   // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/sensors/limit-switch.html
   public CommandBase moveArmAngle(DoubleSupplier angle) {
-    return runOnce(() -> {
+    return run(() -> {
       if (angle.getAsDouble() > 0.0) {
         if (!armAngleTopLimit.get()) {
           armMotor.set(0.0);
@@ -107,16 +122,31 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase moveArmExtend(DoubleSupplier inches) {
-    return runOnce(() -> {
+    return run(() -> {
       armExtendMotor
           .set(armExtendPIDController.calculate(getArmExtendEncoder(), inches.getAsDouble()));
     });
   }
 
   public CommandBase moveWristAngle(DoubleSupplier angle) {
-    return runOnce(() -> {
+    return run(() -> {
       armWristMotor
-          .setVoltage(armWristFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
+          .setVoltage(armWristFeedforward.calculate(Math.toRadians(angle.getAsDouble() + 3.0), 0.0));
+    });
+  }
+
+  public CommandBase moveToMid(ArmSubsystem armSubsys) {
+    return new SequentialCommandGroup(
+      armSubsys.moveArmAngle(() -> -25.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -21.0, -30.0)),
+      armSubsys.moveArmExtend(() -> 25.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), 21.0, 30.0))
+    );
+  }
+
+  public CommandBase stopArm() {
+    return runOnce(() -> {
+      armMotor.set(0.0);
+      armExtendMotor.set(0.0);
+      armWristMotor.set(0.0);
     });
   }
 
@@ -148,7 +178,8 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.setInverted(true);
 
     compressor.enableDigital();
-    gripperSolenoid.set(Value.kForward);
+
+    gripperSolenoid.set(Value.kReverse);
 
     armAngleEncoder.setPositionConversionFactor(360.0 / ArmConstants.armAngleGearRatio);
     armExtendEncoder.setPositionConversionFactor((Math.PI * 2.0) / ArmConstants.armExtendGearRatio);

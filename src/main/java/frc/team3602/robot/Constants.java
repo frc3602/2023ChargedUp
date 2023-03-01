@@ -167,7 +167,7 @@ public final class Constants {
     public static final double armExtendGearRatio = (60.0 / 1.0);
     public static final double armWristGearRatio = (125.0 / 1.0);
 
-    public static final double armAngleP = 0.05;
+    public static final double armAngleP = 0.30;
     public static final double armAngleI = 0.0;
     public static final double armAngleD = 0.0;
 
@@ -179,5 +179,9 @@ public final class Constants {
     public static final double armExtendP = 0.30;
     public static final double armExtendI = 0.0;
     public static final double armExtendD = 0.0;
+
+    public static final double[][] gridLow = {{0.0}, {0.0}};
+    public static final double[][] gridMid = {{0.0}, {0.0}};
+    public static final double[][] gridHigh = {{0.0}, {0.0}};
   }
 }
