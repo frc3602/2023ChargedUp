@@ -46,7 +46,8 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.armKG, ArmConstants.armKV, ArmConstants.armKA);
   private final PIDController armExtendPIDController =
       new PIDController(ArmConstants.armExtendP, ArmConstants.armExtendI, ArmConstants.armExtendD);
-  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(6.50, 0.48, 1.22, 0.02);
+  private final PIDController armWristPIDController = new PIDController(0.50, 0.0, 0.0);
+  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(1.50, 0.48, 1.23, 0.12);
 
   public ArmSubsystem() {
     resetArmAngleEncoder();
@@ -65,7 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
     SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
     SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
-    SmartDashboard.putBoolean("Stuff", MathBruh.between((int)getArmAngleEncoder(), -21, -30));
+    SmartDashboard.putBoolean("Angle Bool", MathBruh.between(getArmAngleEncoder(), -21, -30));
+    SmartDashboard.putBoolean("Extend Bool", MathBruh.between(getArmExtendEncoder(), 21.0, 35.0));
     // SmartDashboard.putBoolean("Arm Angle Limit", armAngleTopLimit.get());
     // SmartDashboard.putData(CommandScheduler.getInstance());
   }
@@ -131,14 +133,32 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveWristAngle(DoubleSupplier angle) {
     return run(() -> {
       armWristMotor
-          .setVoltage(armWristFeedforward.calculate(Math.toRadians(angle.getAsDouble() + 3.0), 0.0));
+          .setVoltage(armWristPIDController.calculate(getArmWristEncoder(), angle.getAsDouble())
+              + armWristFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
     });
+  }
+
+  public CommandBase moveToLow(ArmSubsystem armSubsys) {
+    return new SequentialCommandGroup(
+      armSubsys.moveWristAngle(() -> 145.0).until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150)).andThen(armSubsys.stopArmWrist()),
+      armSubsys.moveArmAngle(() -> 0.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -2.0, -2.0)).andThen(armSubsys.stopArmAngle()),
+      armSubsys.moveArmAngle(() -> -60.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -58.0, -62.0)).andThen(armSubsys.stopArmAngle())
+    );
   }
 
   public CommandBase moveToMid(ArmSubsystem armSubsys) {
     return new SequentialCommandGroup(
-      armSubsys.moveArmAngle(() -> -25.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -21.0, -30.0)),
-      armSubsys.moveArmExtend(() -> 25.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), 21.0, 30.0))
+      armSubsys.moveWristAngle(() -> 145.0).until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150)).andThen(armSubsys.stopArmWrist()),
+      armSubsys.moveArmAngle(() -> -23.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -21.0, -25.0)).andThen(armSubsys.stopArmAngle()),
+      armSubsys.moveArmExtend(() -> 10.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), 8.0, 12.0)).andThen(armSubsys.stopArmExtend())
+    );
+  }
+
+  public CommandBase moveToHigh(ArmSubsystem armSubsys) {
+    return new SequentialCommandGroup(
+      armSubsys.moveWristAngle(() -> 145.0).until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150)).andThen(armSubsys.stopArmWrist()),
+      armSubsys.moveArmAngle(() -> -15.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -14.0, -16.0)).andThen(armSubsys.stopArmAngle()),
+      armSubsys.moveArmExtend(() -> 27.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), 25.0, 29.0)).andThen(armSubsys.stopArmExtend())
     );
   }
 
@@ -163,11 +183,18 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase openGripper() {
-    return runOnce(() -> gripperSolenoid.set(Value.kReverse));
+    return runOnce(() -> gripperSolenoid.set(Value.kForward));
   }
 
   public CommandBase closeGripper() {
-    return runOnce(() -> gripperSolenoid.set(Value.kForward));
+    return runOnce(() -> gripperSolenoid.set(Value.kReverse));
+  }
+
+  public CommandBase closeGripperDown(ArmSubsystem armSubsys) {
+    return new SequentialCommandGroup(
+      moveWristAngle(() -> 0.0).until(() -> MathBruh.between(getArmWristEncoder(), -2.0, 2.0)).andThen(armSubsys.stopArmWrist()),
+      closeGripper().until(() -> gripperSolenoid.get() == Value.kReverse)
+    );
   }
 
   private void configArmSubsys() {
@@ -175,11 +202,15 @@ public class ArmSubsystem extends SubsystemBase {
     armExtendMotor.setIdleMode(IdleMode.kBrake);
     armWristMotor.setIdleMode(IdleMode.kBrake);
 
+    armMotor.setSmartCurrentLimit(30);
+    armExtendMotor.setSmartCurrentLimit(30);
+    armWristMotor.setSmartCurrentLimit(1);
+
     armMotor.setInverted(true);
 
     compressor.enableDigital();
 
-    gripperSolenoid.set(Value.kReverse);
+    gripperSolenoid.set(Value.kOff);
 
     armAngleEncoder.setPositionConversionFactor(360.0 / ArmConstants.armAngleGearRatio);
     armExtendEncoder.setPositionConversionFactor((Math.PI * 2.0) / ArmConstants.armExtendGearRatio);

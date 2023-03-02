@@ -163,25 +163,21 @@ public final class Constants {
 
     public static final double armZeroAngle = 0.0; // TODO: Set zero angle later.
 
-    public static final double armAngleGearRatio = (353.75 / 1.0);
+    public static final double armAngleGearRatio = (1338.84 / 1.0);
     public static final double armExtendGearRatio = (60.0 / 1.0);
-    public static final double armWristGearRatio = (125.0 / 1.0);
+    public static final double armWristGearRatio = (500.0 / 1.0);
 
-    public static final double armAngleP = 0.30;
+    public static final double armAngleP = 0.90;
     public static final double armAngleI = 0.0;
-    public static final double armAngleD = 0.0;
+    public static final double armAngleD = 0.10;
 
     public static final double armKS = 6.0;
-    public static final double armKG = 0.90;
-    public static final double armKV = 1.89;
-    public static final double armKA = 0.03;
+    public static final double armKG = 0.23; // 1.11
+    public static final double armKV = 26.09; // 6.89
+    public static final double armKA = 0.03; // 6.19
 
-    public static final double armExtendP = 0.30;
+    public static final double armExtendP = 0.50;
     public static final double armExtendI = 0.0;
     public static final double armExtendD = 0.0;
-
-    public static final double[][] gridLow = {{0.0}, {0.0}};
-    public static final double[][] gridMid = {{0.0}, {0.0}};
-    public static final double[][] gridHigh = {{0.0}, {0.0}};
   }
 }

@@ -45,59 +45,27 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
-    // armJoystick.x()
-    // .onTrue(armSubsys.moveArmAngle(() -> 25.0)
-    // .raceWith(armSubsys.moveArmExtend(() -> 25.0), armSubsys.moveWristAngle(() -> 45))
-    // .until(() -> Math.between(armSubsys.getArmAngleEncoder(), 23, 27)));
+    // Move to floor
+    armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    armJoystick.y().whileTrue(armSubsys.moveArmAngle(() -> 8.0))
-        .whileFalse(armSubsys.stopArmAngle());
+    // Move to mid
     armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    armJoystick.a().whileTrue(armSubsys.moveWristAngle(() -> 10.0))
-        .whileFalse(armSubsys.stopArmWrist());
+    // Move to high
+    // armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    // armJoystick.x().whileTrue(armSubsys.moveArmAngle(() -> -25.0))
-    // .whileFalse(armSubsys.stopArmAngle());
-    // armJoystick.x().whileTrue(armSubsys.moveArmExtend(() -> 25.0))
-    // .whileFalse(armSubsys.stopArmExtend());
+    // Open gripper
+    armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
 
-    // new JoystickButton(driver, XboxController.Button.kX.value)
-    // .whileTrue(armSubsys.moveArmAngle(() -> 4.0)).whileFalse(armSubsys.stopArmAngle());
-
-    // new JoystickButton(driver, XboxController.Button.kY.value)
-    // .whileTrue(armSubsys.moveArmAngle(() -> -35.0)).whileFalse(armSubsys.stopArmAngle());
-
-    // Close Gripper
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
-        .whileTrue(armSubsys.openGripper());
-
-    // Open Gripper
-    new JoystickButton(driver, XboxController.Button.kRightBumper.value)
-        .whileTrue(armSubsys.closeGripper());
-
-    // // Arm Up
-    // new JoystickButton(driver, XboxController.Button.kX.value)
-    // .whileTrue(armSubsys.moveArmAngle(() -> 0.50)).whileFalse(armSubsys.stopArmAngle());
-
-    // // Arm Down
-    // new JoystickButton(driver, XboxController.Button.kY.value)
-    // .whileTrue(armSubsys.moveArmAngle(() -> -0.50)).whileFalse(armSubsys.stopArmAngle());
-
-    // // Arm Extend
-    // new JoystickButton(driver, XboxController.Button.kA.value)
-    // .whileTrue(armSubsys.moveArmExtend(() -> 0.25)).whileFalse(armSubsys.stopArmExtend());
-
-    // // Arm Extend
-    // new JoystickButton(driver, XboxController.Button.kB.value)
-    // .whileTrue(armSubsys.moveArmExtend(() -> -0.25)).whileFalse(armSubsys.stopArmExtend());
+    // Close gripper
+    armJoystick.rightBumper().whileTrue(armSubsys.closeGripper());
   }
 
   private void configAuton() {
     SmartDashboard.putData(sendableChooser);
 
-    sendableChooser.addOption("Single Game Piece Command",
-        AutonCommands.singleGamePiece(s_Swerve, armSubsys));
+    sendableChooser.addOption("Single Piece Mid",
+        armSubsys.moveToMid(armSubsys));
   }
 
   public Command getAutonomousCommand() {
