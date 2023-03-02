@@ -116,9 +116,13 @@ public class ArmSubsystem extends SubsystemBase {
                   + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
         }
       } else {
-        armMotor
-            .setVoltage(armAnglePIDController.calculate(getArmAngleEncoder(), angle.getAsDouble())
-                + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
+        if (angle.getAsDouble() < -60) {
+          armMotor.set(0.0);
+        } else {
+          armMotor
+          .setVoltage(armAnglePIDController.calculate(getArmAngleEncoder(), angle.getAsDouble())
+              + armAngleFeedforward.calculate(Math.toRadians(angle.getAsDouble()), 0.0));
+        }
       }
     });
   }
@@ -141,7 +145,7 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveToLow(ArmSubsystem armSubsys) {
     return new SequentialCommandGroup(
       armSubsys.moveWristAngle(() -> 145.0).until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150)).andThen(armSubsys.stopArmWrist()),
-      armSubsys.moveArmAngle(() -> 0.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -2.0, -2.0)).andThen(armSubsys.stopArmAngle()),
+      armSubsys.moveArmExtend(() -> 0.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), -2.0, -2.0)).andThen(armSubsys.stopArmExtend()),
       armSubsys.moveArmAngle(() -> -60.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -58.0, -62.0)).andThen(armSubsys.stopArmAngle())
     );
   }
