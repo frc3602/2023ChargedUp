@@ -65,7 +65,7 @@ public class RobotContainer {
     SmartDashboard.putData(sendableChooser);
 
     sendableChooser.addOption("Single Piece Mid",
-        armSubsys.moveToMid(armSubsys));
+        armSubsys.moveToMidAuton(armSubsys));
   }
 
   public Command getAutonomousCommand() {

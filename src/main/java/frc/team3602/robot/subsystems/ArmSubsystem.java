@@ -166,6 +166,15 @@ public class ArmSubsystem extends SubsystemBase {
     );
   }
 
+  public CommandBase moveToMidAuton(ArmSubsystem armSubsys) {
+    return new SequentialCommandGroup(
+      closeGripper().until(() -> gripperSolenoid.get() == Value.kReverse),
+      armSubsys.moveWristAngle(() -> 145.0).until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150)).andThen(armSubsys.stopArmWrist()),
+      armSubsys.moveArmAngle(() -> -23.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -21.0, -25.0)).andThen(armSubsys.stopArmAngle()),
+      armSubsys.moveArmExtend(() -> 10.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), 8.0, 12.0)).andThen(armSubsys.stopArmExtend())
+    );
+  }
+
   public CommandBase stopArm() {
     return runOnce(() -> {
       armMotor.set(0.0);
