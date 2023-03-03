@@ -52,7 +52,7 @@ public class RobotContainer {
     armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());
 
     // Move to high
-    // armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
+    armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
 
     // Open gripper
     armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
