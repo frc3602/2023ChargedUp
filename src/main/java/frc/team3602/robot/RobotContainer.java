@@ -39,8 +39,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> -driver.getRawAxis(translationAxis),
-        () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> true));
-
+        () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> true)); // false = field
+                                                                                                     // true = robot
     configureButtonBindings();
     configAuton();
   }
@@ -48,37 +48,37 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
-    new JoystickButton(driver, XboxController.Button.kStart.value)
-        .toggleOnTrue(Commands.run(() -> robotCentric = false)).toggleOnFalse(Commands.run(() -> robotCentric = true));
+    // // Move to floor
+      armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    // Move to floor
-    armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
+    // // Move to mid
+      armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    // Move to mid
-    armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());
+    // // Move to high
+      armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    // Move to high
-<<<<<<< Updated upstream
-    armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
-=======
-     armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
->>>>>>> Stashed changes
+    // // Open gripper
+      armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
 
-    // Open gripper
-    armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
-
-    // Close gripper
-    armJoystick.rightBumper().whileTrue(armSubsys.closeGripper());
+      // // Raise Intake
+      armJoystick.povUp().whileTrue(armSubsys.raiseIntake());
+     
+      // // Lower Intake
+      armJoystick.povDown().whileTrue(armSubsys.lowerInake());
+      
+      // // Close gripper
+      armJoystick.rightBumper().whileTrue(armSubsys.closeGripper());
   }
 
   private void configAuton() {
     SmartDashboard.putData(sendableChooser);
 
-    sendableChooser.addOption("Single Piece Mid",
-        armSubsys.moveToMidAuton(armSubsys));
+    // sendableChooser.addOption("Single Piece Mid",
+        armSubsys.moveToMidAuton(armSubsys);
   }
 
   public Command getAutonomousCommand() {
-    return sendableChooser.getSelected();
+   return sendableChooser.getSelected();
+    //  return armSubsys.moveToMidAuton(armSubsys);
   }
 }

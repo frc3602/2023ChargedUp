@@ -33,7 +33,8 @@ public class ArmSubsystem extends SubsystemBase {
   private final Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
   private final DoubleSolenoid gripperSolenoid =
       new DoubleSolenoid(50, PneumaticsModuleType.CTREPCM, 0, 1);
-
+  private final DoubleSolenoid intakeSolenoid =
+      new DoubleSolenoid(50, PneumaticsModuleType.CTREPCM, 2, 3);
   private final RelativeEncoder armAngleEncoder = armMotor.getEncoder();
   private final RelativeEncoder armExtendEncoder = armExtendMotor.getEncoder();
   private final RelativeEncoder armWristEncoder = armWristMotor.getEncoder();
@@ -63,13 +64,16 @@ public class ArmSubsystem extends SubsystemBase {
     // resetArmAngleEncoder();
     // }
 
-    SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
-    SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
-    SmartDashboard.putBoolean("Angle Bool", MathBruh.between(getArmAngleEncoder(), -21, -30));
-    SmartDashboard.putBoolean("Extend Bool", MathBruh.between(getArmExtendEncoder(), 21.0, 35.0));
+    // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
+    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    // SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
+    // SmartDashboard.putBoolean("Angle Bool", MathBruh.between(getArmAngleEncoder(), -21, -30));
+    // SmartDashboard.putBoolean("Extend Bool", MathBruh.between(getArmExtendEncoder(), 21.0, 35.0));
     // SmartDashboard.putBoolean("Arm Angle Limit", armAngleTopLimit.get());
     // SmartDashboard.putData(CommandScheduler.getInstance());
+
+      SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
+
   }
 
   public double getArmAngleEncoder() {
@@ -108,8 +112,11 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveArmAngle(DoubleSupplier angle) {
     return run(() -> {
       if (angle.getAsDouble() > 0.0) {
-        if (!armAngleTopLimit.get()) {
+        if (!armAngleTopLimit.get() || MathBruh.between(getArmExtendEncoder(), 3.0, -3.0)) {
           armMotor.set(0.0);
+          // armMotor
+          //     .setVoltage(armAnglePIDController.calculate(getArmAngleEncoder(), 0.0)
+          //         + armAngleFeedforward.calculate(0.0, 0.0));
         } else {
           armMotor
               .setVoltage(armAnglePIDController.calculate(getArmAngleEncoder(), angle.getAsDouble())
@@ -202,7 +209,13 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase closeGripper() {
     return runOnce(() -> gripperSolenoid.set(Value.kReverse));
   }
-
+  
+  public CommandBase lowerInake() {
+    return runOnce(() -> intakeSolenoid.set(Value.kForward));
+  }
+  public CommandBase raiseIntake() {
+    return runOnce(() -> intakeSolenoid.set(Value.kReverse));
+  }
   public CommandBase closeGripperDown(ArmSubsystem armSubsys) {
     return new SequentialCommandGroup(
       moveWristAngle(() -> 0.0).until(() -> MathBruh.between(getArmWristEncoder(), -2.0, 2.0)).andThen(armSubsys.stopArmWrist()),
@@ -224,6 +237,7 @@ public class ArmSubsystem extends SubsystemBase {
     compressor.enableDigital();
 
     gripperSolenoid.set(Value.kOff);
+    intakeSolenoid.set(Value.kOff);
 
     armAngleEncoder.setPositionConversionFactor(360.0 / ArmConstants.armAngleGearRatio);
     armExtendEncoder.setPositionConversionFactor((Math.PI * 2.0) / ArmConstants.armExtendGearRatio);
