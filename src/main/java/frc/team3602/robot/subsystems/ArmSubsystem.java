@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAlternateEncoder.Type;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
@@ -15,9 +14,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team3602.robot.Constants.ArmConstants;
@@ -47,8 +44,8 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.armKG, ArmConstants.armKV, ArmConstants.armKA);
   private final PIDController armExtendPIDController =
       new PIDController(ArmConstants.armExtendP, ArmConstants.armExtendI, ArmConstants.armExtendD);
-  private final PIDController armWristPIDController = new PIDController(0.50, 0.0, 0.0);
-  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(1.50, 0.48, 1.23, 0.12);
+  private final PIDController armWristPIDController = new PIDController(0.60, 0.0, 0.10);
+  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(2.50, 0.48, 5.37, 2.35); // let kV = 1.23, let kA = 0.12
 
   public ArmSubsystem() {
     resetArmAngleEncoder();
@@ -60,20 +57,15 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (!armAngleTopLimit.get()) {
-    // resetArmAngleEncoder();
-    // }
-
     // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
     // SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
     // SmartDashboard.putBoolean("Angle Bool", MathBruh.between(getArmAngleEncoder(), -21, -30));
     // SmartDashboard.putBoolean("Extend Bool", MathBruh.between(getArmExtendEncoder(), 21.0, 35.0));
     // SmartDashboard.putBoolean("Arm Angle Limit", armAngleTopLimit.get());
     // SmartDashboard.putData(CommandScheduler.getInstance());
 
-      SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
-
+    SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
   }
 
   public double getArmAngleEncoder() {
