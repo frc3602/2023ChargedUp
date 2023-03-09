@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.team3602.lib.math.MathBruh;
 import frc.team3602.robot.commands.*;
 import frc.team3602.robot.subsystems.*;
 
@@ -21,13 +19,6 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  private boolean robotCentric = true;
-
-  // private final JoystickButton zeroGyro =
-  // new JoystickButton(driver, XboxController.Button.kY.value);
-  // private final JoystickButton robotCentric =
-  // new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
   private final ArmSubsystem armSubsys = new ArmSubsystem();
@@ -37,19 +28,13 @@ public class RobotContainer {
 
   public RobotContainer() {
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> -driver.getRawAxis(translationAxis),
-        () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> false)); // false
-                                                                                                     // =
-                                                                                                     // field
-                                                                                                     // true
-                                                                                                     // =
-                                                                                                     // robot
+        () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> false)); // false = field
+                                                                                                     // true = robot
     configureButtonBindings();
     configAuton();
   }
 
   private void configureButtonBindings() {
-    // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
     // Move to floor
     armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
 
@@ -59,40 +44,11 @@ public class RobotContainer {
     // Move to high
     armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    // // Move wrist to 145 degrees
-    // armJoystick.povUp()
-    // .whileTrue(armSubsys.moveWristAngle(() -> 145)
-    // .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150))
-    // .andThen(armSubsys.stopArmWrist()))
-    // .whileFalse(armSubsys.stopArmWrist());
-
-    // // Move wrist to 45 degrees
-    // armJoystick.povLeft()
-    // .whileTrue(armSubsys.moveWristAngle(() -> 45)
-    // .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 40, 50))
-    // .andThen(armSubsys.stopArmWrist()))
-    // .whileFalse(armSubsys.stopArmWrist());
-
-    // // Move wrist to 0 degrees
-    // armJoystick.povDown()
-    // .whileTrue(armSubsys.moveWristAngle(() -> 0)
-    // .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), -5, 5))
-    // .andThen(armSubsys.stopArmWrist()))
-    // .whileFalse(armSubsys.stopArmWrist());
-
     // Open gripper
     armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
 
     // Close gripper
     armJoystick.rightBumper().whileTrue(armSubsys.closeGripper());
-
-    // Raise Intake
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
-        .whileTrue(armSubsys.raiseIntake());
-
-    // Lower Intake
-    new JoystickButton(driver, XboxController.Button.kRightBumper.value)
-        .whileTrue(armSubsys.lowerInake());
   }
 
   private void configAuton() {
