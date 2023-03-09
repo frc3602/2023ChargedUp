@@ -61,24 +61,24 @@ public class RobotContainer {
 
     // // Move wrist to 145 degrees
     // armJoystick.povUp()
-    //     .whileTrue(armSubsys.moveWristAngle(() -> 145)
-    //         .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150))
-    //         .andThen(armSubsys.stopArmWrist()))
-    //     .whileFalse(armSubsys.stopArmWrist());
+    // .whileTrue(armSubsys.moveWristAngle(() -> 145)
+    // .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150))
+    // .andThen(armSubsys.stopArmWrist()))
+    // .whileFalse(armSubsys.stopArmWrist());
 
     // // Move wrist to 45 degrees
     // armJoystick.povLeft()
-    //     .whileTrue(armSubsys.moveWristAngle(() -> 45)
-    //         .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 40, 50))
-    //         .andThen(armSubsys.stopArmWrist()))
-    //     .whileFalse(armSubsys.stopArmWrist());
+    // .whileTrue(armSubsys.moveWristAngle(() -> 45)
+    // .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 40, 50))
+    // .andThen(armSubsys.stopArmWrist()))
+    // .whileFalse(armSubsys.stopArmWrist());
 
     // // Move wrist to 0 degrees
     // armJoystick.povDown()
-    //     .whileTrue(armSubsys.moveWristAngle(() -> 0)
-    //         .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), -5, 5))
-    //         .andThen(armSubsys.stopArmWrist()))
-    //     .whileFalse(armSubsys.stopArmWrist());
+    // .whileTrue(armSubsys.moveWristAngle(() -> 0)
+    // .until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), -5, 5))
+    // .andThen(armSubsys.stopArmWrist()))
+    // .whileFalse(armSubsys.stopArmWrist());
 
     // Open gripper
     armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
@@ -98,12 +98,11 @@ public class RobotContainer {
   private void configAuton() {
     SmartDashboard.putData(sendableChooser);
 
-    // sendableChooser.addOption("Single Piece Mid",
-    armSubsys.moveToMidAuton(armSubsys);
+    sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
+    sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
   }
 
   public Command getAutonomousCommand() {
-    // return sendableChooser.getSelected();
-    return armSubsys.moveToMidAuton(armSubsys);
+    return sendableChooser.getSelected();
   }
 }
