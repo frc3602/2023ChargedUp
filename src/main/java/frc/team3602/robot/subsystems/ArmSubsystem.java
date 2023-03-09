@@ -175,6 +175,15 @@ public class ArmSubsystem extends SubsystemBase {
     );
   }
 
+  public CommandBase moveToHighAuton(ArmSubsystem armSubsys) {
+    return new SequentialCommandGroup(
+      armSubsys.moveWristAngle(() -> 145.0).until(() -> MathBruh.between(armSubsys.getArmWristEncoder(), 140, 150)).andThen(armSubsys.stopArmWrist()),
+      armSubsys.moveArmAngle(() -> -15.0).until(() -> MathBruh.between(armSubsys.getArmAngleEncoder(), -14.0, -16.0)).andThen(armSubsys.stopArmAngle()),
+      armSubsys.moveArmExtend(() -> 27.0).until(() -> MathBruh.between(armSubsys.getArmExtendEncoder(), 25.0, 29.0)).andThen(armSubsys.stopArmExtend()),
+      openGripper().until(() -> gripperSolenoid.get() == Value.kForward)
+    );
+  }
+
   public CommandBase stopArm() {
     return runOnce(() -> {
       armMotor.set(0.0);
