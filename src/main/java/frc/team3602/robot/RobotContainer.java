@@ -21,7 +21,7 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  private double slowDown = 0;
+  private double slowDown = 1.0;
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -46,7 +46,7 @@ public class RobotContainer {
     // Slow down button
     new JoystickButton(driver, XboxController.Button.kY.value)
         .whileTrue(new InstantCommand(() -> slowDown = 0.50))
-        .whileFalse(new InstantCommand(() -> slowDown = 0.0));
+        .whileFalse(new InstantCommand(() -> slowDown = 1.0));
 
     // Move to floor
     armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
