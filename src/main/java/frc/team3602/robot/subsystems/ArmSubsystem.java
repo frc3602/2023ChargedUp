@@ -55,9 +55,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
-    // SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
+    SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
+    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
     // SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
   }
 
@@ -137,7 +137,7 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveInFrame(ArmSubsystem armSubsys) {
     var armAngle = -23.0;
     var extendInches = 0.0;
-    var wristAngle = 0.0;
+    var wristAngle = 15.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
