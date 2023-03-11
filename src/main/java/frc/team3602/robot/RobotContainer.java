@@ -5,7 +5,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.team3602.robot.commands.*;
 import frc.team3602.robot.subsystems.*;
 
@@ -19,6 +21,8 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+  private double slowDown = 0;
+
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
   private final ArmSubsystem armSubsys = new ArmSubsystem();
@@ -27,14 +31,23 @@ public class RobotContainer {
   SendableChooser<Command> sendableChooser = new SendableChooser<>();
 
   public RobotContainer() {
-    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> -driver.getRawAxis(translationAxis),
-        () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> false)); // false = field
-                                                                                                     // true = robot
+    s_Swerve.setDefaultCommand(
+        new TeleopSwerve(s_Swerve,
+        () -> -driver.getRawAxis(translationAxis) * slowDown,
+        () -> -driver.getRawAxis(strafeAxis) * slowDown,
+        () -> -driver.getRawAxis(rotationAxis) * slowDown,
+        () -> false)); // false = field
+                       // true = robot
     configureButtonBindings();
     configAuton();
   }
 
   private void configureButtonBindings() {
+    // Slow down button
+    new JoystickButton(driver, XboxController.Button.kY.value)
+        .toggleOnTrue(new InstantCommand(() -> slowDown = 0.50))
+        .toggleOnFalse(new InstantCommand(() -> slowDown = 0.0));
+
     // Move to floor
     armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
 

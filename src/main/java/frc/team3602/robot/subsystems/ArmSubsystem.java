@@ -135,10 +135,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase moveInFrame(ArmSubsystem armSubsys) {
-    var armAngle = -63.0;
+    var armAngle = -23.0;
     var extendInches = 0.0;
-    var wristAngle = 115.0;
-    return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle));
+    var wristAngle = 0.0;
+    return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
+        .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
 
   public CommandBase moveToLow(ArmSubsystem armSubsys) {
@@ -159,7 +160,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public CommandBase moveToHigh(ArmSubsystem armSubsys) {
     var armAngle = -15.0;
-    var extendInches = 28.0;
+    var extendInches = 30.0;
     var wristAngle = 115.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
