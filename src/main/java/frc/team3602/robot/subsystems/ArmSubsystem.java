@@ -88,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean checkAllArm(ArmSubsystem armSubsys, double armAngle, double armExtendInches,
       double armWristAngle) {
     if (MathBruh.between(armSubsys.getArmAngleEncoder(), armAngle - 5.0, armAngle + 5.0)
-        && MathBruh.between(armSubsys.getArmExtendEncoder(), armExtendInches - 5.0, armExtendInches + 5.0)
+        && MathBruh.between(armSubsys.getArmExtendEncoder(), armExtendInches - 1.0, armExtendInches + 1.5)
         && MathBruh.between(armSubsys.getArmWristEncoder(), armWristAngle - 3.0, armWristAngle + 10.0)) {
       return true;
     } else {
