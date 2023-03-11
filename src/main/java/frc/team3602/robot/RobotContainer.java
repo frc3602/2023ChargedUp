@@ -22,6 +22,7 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   private double slowDown = 1.0;
+  private boolean robotOriented = true;
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -47,6 +48,10 @@ public class RobotContainer {
     new JoystickButton(driver, XboxController.Button.kRightBumper.value)
         .whileTrue(new InstantCommand(() -> slowDown = 0.5))
         .whileFalse(new InstantCommand(() -> slowDown = 1.0));
+
+    new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
+        .toggleOnTrue(new InstantCommand(() -> robotOriented = false))
+        .toggleOnFalse(new InstantCommand(() -> robotOriented = true));
 
     // Move in frame
     armJoystick.b().whileTrue(armSubsys.moveInFrame(armSubsys)).whileFalse(armSubsys.stopArm());
