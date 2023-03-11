@@ -43,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController armExtendPIDController = new PIDController(ArmConstants.armExtendP,
       ArmConstants.armExtendI, ArmConstants.armExtendD);
   private final PIDController armWristPIDController = new PIDController(0.60, 0.0, 0.10);
-  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(2.50, 0.68, 5.37, 2.35); // let kV = 1.23, let kA = 0.12
+  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(2.50, 0.18, 3.91, 0.01); // 0.68, 5.37, 2.35
 
   public ArmSubsystem() {
     resetArmAngleEncoder();
@@ -56,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
     // SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
     // SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
   }
@@ -137,7 +137,7 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveToLow(ArmSubsystem armSubsys) {
     var armAngle = -63.0;
     var extendInches = 0.0;
-    var wristAngle = 145.0;
+    var wristAngle = 115.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
@@ -145,7 +145,7 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveToMid(ArmSubsystem armSubsys) {
     var armAngle = -23.0;
     var extendInches = 10.0;
-    var wristAngle = 145.0;
+    var wristAngle = 115.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
@@ -153,7 +153,7 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase moveToHigh(ArmSubsystem armSubsys) {
     var armAngle = -15.0;
     var extendInches = 28.0;
-    var wristAngle = 145.0;
+    var wristAngle = 115.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
@@ -205,7 +205,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     armMotor.setSmartCurrentLimit(30);
     armExtendMotor.setSmartCurrentLimit(30);
-    armWristMotor.setSmartCurrentLimit(1);
+    armWristMotor.setSmartCurrentLimit(5);
 
     armMotor.setInverted(true);
 
