@@ -13,22 +13,26 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team3602.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
+  /* Motor Controllers */
   private final CANSparkMax armMotor = new CANSparkMax(ArmConstants.armMotorCANID, MotorType.kBrushless);
   private final CANSparkMax armExtendMotor = new CANSparkMax(ArmConstants.armExtendCANID, MotorType.kBrushless);
   private final CANSparkMax armWristMotor = new CANSparkMax(ArmConstants.armWristCANID, MotorType.kBrushless);
 
-  private final Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
-  private final DoubleSolenoid gripperSolenoid = new DoubleSolenoid(50, PneumaticsModuleType.CTREPCM, 0, 1);
-  private final DoubleSolenoid intakeSolenoid = new DoubleSolenoid(50, PneumaticsModuleType.CTREPCM, 2, 3);
+  /* Encoders */
   private final RelativeEncoder armAngleEncoder = armMotor.getEncoder();
   private final RelativeEncoder armExtendEncoder = armExtendMotor.getEncoder();
   private final RelativeEncoder armWristEncoder = armWristMotor.getEncoder();
+
+  /* Pneumatics */
+  private final Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+  private final DoubleSolenoid gripperSolenoid = new DoubleSolenoid(50, PneumaticsModuleType.CTREPCM, 0, 1);
 
   public final DigitalInput armAngleTopLimit = new DigitalInput(0);
 
@@ -39,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final PIDController armExtendPIDController = new PIDController(ArmConstants.armExtendP,
       ArmConstants.armExtendI, ArmConstants.armExtendD);
   private final PIDController armWristPIDController = new PIDController(0.60, 0.0, 0.10);
-  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(2.50, 0.48, 5.37, 2.35); // let kV = 1.23, let kA = 0.12
+  private final ArmFeedforward armWristFeedforward = new ArmFeedforward(2.50, 0.68, 5.37, 2.35); // let kV = 1.23, let kA = 0.12
 
   public ArmSubsystem() {
     resetArmAngleEncoder();
@@ -85,7 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
       double armWristAngle) {
     if (MathBruh.between(armSubsys.getArmAngleEncoder(), armAngle - 5.0, armAngle + 5.0)
         && MathBruh.between(armSubsys.getArmExtendEncoder(), armExtendInches - 5.0, armExtendInches + 5.0)
-        && MathBruh.between(armSubsys.getArmWristEncoder(), armWristAngle - 5.0, armWristAngle + 5.0)) {
+        && MathBruh.between(armSubsys.getArmWristEncoder(), armWristAngle - 3.0, armWristAngle + 10.0)) {
       return true;
     } else {
       return false;
@@ -125,9 +129,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void moveArm(ArmSubsystem armSubsys, DoubleSupplier armAngleSup, DoubleSupplier armExtendSup,
       DoubleSupplier armWristAngleSup) {
+    armSubsys.moveWristAngle(armWristAngleSup);
     armSubsys.moveArmAngle(armAngleSup);
     armSubsys.moveArmExtend(armExtendSup);
-    armSubsys.moveWristAngle(armWristAngleSup);
   }
 
   public CommandBase moveToLow(ArmSubsystem armSubsys) {
@@ -148,7 +152,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public CommandBase moveToHigh(ArmSubsystem armSubsys) {
     var armAngle = -15.0;
-    var extendInches = 27.0;
+    var extendInches = 28.0;
     var wristAngle = 145.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
@@ -207,7 +211,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     compressor.enableDigital();
     gripperSolenoid.set(Value.kOff);
-    intakeSolenoid.set(Value.kOff);
 
     armAngleEncoder.setPositionConversionFactor(360.0 / ArmConstants.armAngleGearRatio);
     armExtendEncoder.setPositionConversionFactor((Math.PI * 2.0) / ArmConstants.armExtendGearRatio);
