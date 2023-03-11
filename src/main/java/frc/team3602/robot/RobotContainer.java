@@ -44,7 +44,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Slow down button
-    new JoystickButton(driver, XboxController.Button.kY.value)
+    new JoystickButton(driver, XboxController.Button.kRightBumper.value)
         .whileTrue(new InstantCommand(() -> slowDown = 0.50))
         .whileFalse(new InstantCommand(() -> slowDown = 1.0));
 
