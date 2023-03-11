@@ -134,6 +134,13 @@ public class ArmSubsystem extends SubsystemBase {
     armSubsys.moveArmExtend(armExtendSup);
   }
 
+  public CommandBase moveInFrame(ArmSubsystem armSubsys) {
+    var armAngle = -63.0;
+    var extendInches = 0.0;
+    var wristAngle = 115.0;
+    return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle));
+  }
+
   public CommandBase moveToLow(ArmSubsystem armSubsys) {
     var armAngle = -63.0;
     var extendInches = 0.0;
@@ -206,6 +213,9 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.setSmartCurrentLimit(30);
     armExtendMotor.setSmartCurrentLimit(30);
     armWristMotor.setSmartCurrentLimit(5);
+
+    armMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    armMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 1);
 
     armMotor.setInverted(true);
 
