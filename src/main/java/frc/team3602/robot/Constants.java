@@ -165,7 +165,7 @@ public final class Constants {
 
     public static final double armAngleGearRatio = (1338.84 / 1.0);
     public static final double armExtendGearRatio = (60.0 / 1.0);
-    public static final double armWristGearRatio = (500.0 / 1.0);
+    public static final double armWristGearRatio = (400.0 / 1.0);
 
     public static final double armAngleP = 0.90;
     public static final double armAngleI = 0.0;
