@@ -45,8 +45,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Slow down button
     new JoystickButton(driver, XboxController.Button.kY.value)
-        .toggleOnTrue(new InstantCommand(() -> slowDown = 0.50))
-        .toggleOnFalse(new InstantCommand(() -> slowDown = 0.0));
+        .whileTrue(new InstantCommand(() -> slowDown = 0.50))
+        .whileFalse(new InstantCommand(() -> slowDown = 0.0));
 
     // Move to floor
     armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
