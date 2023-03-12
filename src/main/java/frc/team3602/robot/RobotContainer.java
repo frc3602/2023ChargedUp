@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.team3602.robot.autos.exampleAuto;
 import frc.team3602.robot.commands.*;
 import frc.team3602.robot.subsystems.*;
 
@@ -23,7 +22,7 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   private double slowDown = 1.0;
-  private boolean robotOriented = true;
+  private boolean robotOriented = false;
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -39,7 +38,7 @@ public class RobotContainer {
         () -> -driver.getRawAxis(strafeAxis) * slowDown,
         () -> -driver.getRawAxis(rotationAxis) * slowDown,
         () -> robotOriented)); // false = field
-                       // true = robot
+                               // true = robot
     configureButtonBindings();
     configAuton();
   }
@@ -52,8 +51,8 @@ public class RobotContainer {
 
     // Robot oriented button
     new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
-        .toggleOnTrue(new InstantCommand(() -> robotOriented = false))
-        .toggleOnFalse(new InstantCommand(() -> robotOriented = true));
+        .onTrue(new InstantCommand(() -> robotOriented = true))
+        .onFalse(new InstantCommand(() -> robotOriented = false));
 
     // Move in frame
     armJoystick.b().whileTrue(armSubsys.moveInFrame(armSubsys)).whileFalse(armSubsys.stopArm());
@@ -78,9 +77,7 @@ public class RobotContainer {
     SmartDashboard.putData(sendableChooser);
 
     sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
-    sendableChooser.addOption("Single Piece Drive Mid", armSubsys.moveToMidDriveAuton(armSubsys, s_Swerve));
     sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
-    sendableChooser.addOption("Swerve Auto", new exampleAuto(s_Swerve));
   }
 
   public Command getAutonomousCommand() {
