@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team3602.robot.RobotContainer;
 import frc.team3602.robot.Constants.ArmConstants;
+import frc.team3602.robot.autos.exampleAuto;
 
 public class ArmSubsystem extends SubsystemBase {
   /* Motor Controllers */
@@ -178,6 +180,13 @@ public class ArmSubsystem extends SubsystemBase {
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward));
   }
 
+  public CommandBase moveToMidDriveAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
+    return new SequentialCommandGroup(
+        armSubsys.moveToMid(armSubsys),
+        openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
+        new exampleAuto(swerveSubsys));
+  }
+
   public CommandBase stopArm() {
     return runOnce(() -> {
       armMotor.set(0.0);
@@ -217,6 +226,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     armMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     armMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 1);
+    armWristMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+    armWristMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 125);
 
     armMotor.setInverted(true);
 

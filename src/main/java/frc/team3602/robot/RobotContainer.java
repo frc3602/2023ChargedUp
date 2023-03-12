@@ -49,6 +49,7 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> slowDown = 0.5))
         .whileFalse(new InstantCommand(() -> slowDown = 1.0));
 
+    // Robot oriented button
     new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
         .toggleOnTrue(new InstantCommand(() -> robotOriented = false))
         .toggleOnFalse(new InstantCommand(() -> robotOriented = true));
@@ -76,6 +77,7 @@ public class RobotContainer {
     SmartDashboard.putData(sendableChooser);
 
     sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
+    sendableChooser.addOption("Single Piece Drive Mid", armSubsys.moveToMidDriveAuton(armSubsys, s_Swerve));
     sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
   }
 
