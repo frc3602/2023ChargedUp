@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.team3602.robot.autos.exampleAuto;
 import frc.team3602.robot.commands.*;
 import frc.team3602.robot.subsystems.*;
 
@@ -37,7 +38,7 @@ public class RobotContainer {
         () -> -driver.getRawAxis(translationAxis) * slowDown,
         () -> -driver.getRawAxis(strafeAxis) * slowDown,
         () -> -driver.getRawAxis(rotationAxis) * slowDown,
-        () -> false)); // false = field
+        () -> robotOriented)); // false = field
                        // true = robot
     configureButtonBindings();
     configAuton();
@@ -79,6 +80,7 @@ public class RobotContainer {
     sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
     sendableChooser.addOption("Single Piece Drive Mid", armSubsys.moveToMidDriveAuton(armSubsys, s_Swerve));
     sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
+    sendableChooser.addOption("Swerve Auto", new exampleAuto(s_Swerve));
   }
 
   public Command getAutonomousCommand() {
