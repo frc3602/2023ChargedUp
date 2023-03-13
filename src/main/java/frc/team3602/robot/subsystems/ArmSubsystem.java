@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team3602.robot.RobotContainer;
 import frc.team3602.robot.Constants.ArmConstants;
 import frc.team3602.robot.autos.exampleAuto;
 
@@ -38,6 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public final DigitalInput armAngleTopLimit = new DigitalInput(0);
 
+  /* Controls engineering */
   private final PIDController armAnglePIDController = new PIDController(ArmConstants.armAngleP, ArmConstants.armAngleI,
       ArmConstants.armAngleD);
   private final ArmFeedforward armAngleFeedforward = new ArmFeedforward(ArmConstants.armKS,
@@ -57,9 +57,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
-    SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
+    // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
+    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    // SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
     // SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
   }
 
