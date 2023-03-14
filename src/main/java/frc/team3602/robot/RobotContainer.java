@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.team3602.robot.autos.AutonCommands;
 import frc.team3602.robot.commands.*;
 import frc.team3602.robot.subsystems.*;
 
@@ -21,8 +22,9 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+  private final JoystickButton robotOriented =
+      new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
   private double slowDown = 1.0;
-  private boolean robotOriented = false;
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -37,8 +39,8 @@ public class RobotContainer {
         () -> -driver.getRawAxis(translationAxis) * slowDown,
         () -> -driver.getRawAxis(strafeAxis) * slowDown,
         () -> -driver.getRawAxis(rotationAxis) * slowDown,
-        () -> robotOriented)); // false = field
-                               // true = robot
+        () -> robotOriented.getAsBoolean())); // false = field
+                                              // true = robot
     configureButtonBindings();
     configAuton();
   }
@@ -48,11 +50,6 @@ public class RobotContainer {
     new JoystickButton(driver, XboxController.Button.kRightBumper.value)
         .whileTrue(new InstantCommand(() -> slowDown = 0.5))
         .whileFalse(new InstantCommand(() -> slowDown = 1.0));
-
-    // Robot oriented button
-    new JoystickButton(driver, XboxController.Button.kLeftBumper.value)
-        .onTrue(new InstantCommand(() -> robotOriented = true))
-        .onFalse(new InstantCommand(() -> robotOriented = false));
 
     // Move in frame
     armJoystick.b().whileTrue(armSubsys.moveInFrame(armSubsys)).whileFalse(armSubsys.stopArm());
@@ -78,6 +75,7 @@ public class RobotContainer {
 
     sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
     sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
+    sendableChooser.addOption("Single Mid Drive", armSubsys.moveToMidDriveAuton(armSubsys, s_Swerve));
   }
 
   public Command getAutonomousCommand() {

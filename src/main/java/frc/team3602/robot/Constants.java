@@ -161,8 +161,6 @@ public final class Constants {
     public static final int armExtendCANID = 15;
     public static final int armWristCANID = 14;
 
-    public static final double armZeroAngle = 0.0; // TODO: Set zero angle later.
-
     public static final double armAngleGearRatio = (1338.84 / 1.0);
     public static final double armExtendGearRatio = (20.0 / 1.0);
     public static final double armWristGearRatio = (400.0 / 1.0);

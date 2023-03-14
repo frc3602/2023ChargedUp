@@ -15,9 +15,11 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team3602.robot.Constants.ArmConstants;
+import frc.team3602.robot.autos.AutonCommands;
 import frc.team3602.robot.autos.exampleAuto;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -184,7 +186,16 @@ public class ArmSubsystem extends SubsystemBase {
     return new SequentialCommandGroup(
         armSubsys.moveToMid(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
-        new exampleAuto(swerveSubsys));
+        Commands.waitSeconds(0.5),
+        AutonCommands.driveOutCommunity(swerveSubsys));
+  }
+
+  public CommandBase moveToHighDriveAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
+    return new SequentialCommandGroup(
+        armSubsys.moveToHigh(armSubsys),
+        openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
+        Commands.waitSeconds(0.5),
+        AutonCommands.driveOutCommunity(swerveSubsys));
   }
 
   public CommandBase stopArm() {
