@@ -76,6 +76,7 @@ public class RobotContainer {
     sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
     sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
     sendableChooser.addOption("Single Mid Drive", armSubsys.moveToMidDriveAuton(armSubsys, s_Swerve));
+    sendableChooser.addOption("Single High Drive", armSubsys.moveToHighDriveAuton(armSubsys, s_Swerve));
   }
 
   public Command getAutonomousCommand() {
