@@ -65,7 +65,7 @@ public class RobotContainer {
     armJoystick.b().whileTrue(armSubsys.moveInFrame(armSubsys)).whileFalse(armSubsys.stopArm());
 
     // Move to double substation
-    armJoystick.a().whileTrue(armSubsys.moveToSubstation(armSubsys)).whileFalse(armSubsys.stopArm());
+    armJoystick.a().whileTrue(armSubsys.moveToSub(armSubsys)).whileFalse(armSubsys.stopArm());
 
     // Move to mid
     armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());

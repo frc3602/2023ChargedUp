@@ -154,10 +154,10 @@ public class ArmSubsystem extends SubsystemBase {
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
 
-  public CommandBase moveToSubstation(ArmSubsystem armSubsys) {
-    var armAngle = -7.0;
+  public CommandBase moveToSub(ArmSubsystem armSubsys) {
+    var armAngle = -9.0;
     var extendInches = 0.0;
-    var wristAngle = 48.0;
+    var wristAngle = 52.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
