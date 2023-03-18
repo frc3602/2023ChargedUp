@@ -22,6 +22,7 @@ public class RobotContainer {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
+  SendableChooser<Double> controllerPolarity = new SendableChooser<>();
   private final JoystickButton robotOriented =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
   private double slowDown = 1.0;
@@ -36,13 +37,17 @@ public class RobotContainer {
   public RobotContainer() {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(s_Swerve,
-        () -> -driver.getRawAxis(translationAxis) * slowDown,
-        () -> -driver.getRawAxis(strafeAxis) * slowDown,
-        () -> -driver.getRawAxis(rotationAxis) * slowDown,
+        () -> controllerPolarity.getSelected() * driver.getRawAxis(translationAxis) * slowDown,
+        () -> controllerPolarity.getSelected() * driver.getRawAxis(strafeAxis) * slowDown,
+        () -> controllerPolarity.getSelected() * driver.getRawAxis(rotationAxis) * slowDown,
         () -> robotOriented.getAsBoolean())); // false = field
                                               // true = robot
     configureButtonBindings();
     configAuton();
+
+    SmartDashboard.putData(controllerPolarity);
+    controllerPolarity.addOption("Positive", 1.0);
+    controllerPolarity.addOption("Positive", -1.0);
   }
 
   private void configureButtonBindings() {
@@ -50,6 +55,12 @@ public class RobotContainer {
     new JoystickButton(driver, XboxController.Button.kRightBumper.value)
         .whileTrue(new InstantCommand(() -> slowDown = 0.5))
         .whileFalse(new InstantCommand(() -> slowDown = 1.0));
+
+    // Move down a bit
+    armJoystick.povUp()
+        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -17))
+            .until(() -> armSubsys.checkArmAngle(armSubsys, -17)).andThen(armSubsys.stopArmAngle()))
+        .whileFalse(armSubsys.stopArmAngle());
 
     // Move in frame
     armJoystick.b().whileTrue(armSubsys.moveInFrame(armSubsys)).whileFalse(armSubsys.stopArm());

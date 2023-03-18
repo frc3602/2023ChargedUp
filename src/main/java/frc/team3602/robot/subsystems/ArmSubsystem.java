@@ -89,6 +89,14 @@ public class ArmSubsystem extends SubsystemBase {
     armWristEncoder.setPosition(0.0);
   }
 
+  public boolean checkArmAngle(ArmSubsystem armSubsys, double armAngle) {
+    if (MathBruh.between(armSubsys.getArmAngleEncoder(), armAngle - 5.0, armAngle + 5.0)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public boolean checkAllArm(ArmSubsystem armSubsys, double armAngle, double armExtendInches,
       double armWristAngle) {
     if (MathBruh.between(armSubsys.getArmAngleEncoder(), armAngle - 5.0, armAngle + 5.0)
@@ -139,7 +147,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase moveInFrame(ArmSubsystem armSubsys) {
-    var armAngle = -23.0;
+    var armAngle = -22;
     var extendInches = 0.0;
     var wristAngle = 15.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
