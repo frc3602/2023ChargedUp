@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team3602.robot.Constants.ArmConstants;
 import frc.team3602.robot.autos.AutonCommands;
-import frc.team3602.robot.autos.exampleAuto;
 
 public class ArmSubsystem extends SubsystemBase {
   /* Motor Controllers */
@@ -155,9 +154,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase moveToSub(ArmSubsystem armSubsys) {
-    var armAngle = -12.0;
+    var armAngle = -11.0;
     var extendInches = 0.0;
-    var wristAngle = 65.0;
+    var wristAngle = 63.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
