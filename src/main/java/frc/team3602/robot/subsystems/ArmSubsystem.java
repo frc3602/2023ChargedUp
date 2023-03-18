@@ -58,9 +58,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
-    // SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
-    // SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
+    SmartDashboard.putNumber("Arm Angle Encoder", getArmAngleEncoder());
+    SmartDashboard.putNumber("Arm Wrist Encoder", getArmWristEncoder());
+    SmartDashboard.putNumber("Arm Extend Encoder", getArmExtendEncoder());
     // SmartDashboard.putBoolean("Arm Limit Switch", armAngleTopLimit.get());
   }
 
