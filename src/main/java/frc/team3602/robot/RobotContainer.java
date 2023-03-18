@@ -57,8 +57,8 @@ public class RobotContainer {
 
     // Move down a bit
     armJoystick.povUp()
-        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -20))
-            .until(() -> armSubsys.checkArmAngle(armSubsys, -20)).andThen(armSubsys.stopArmAngle()))
+        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -25))
+            .until(() -> armSubsys.checkArmAngle(armSubsys, -25)).andThen(armSubsys.stopArmAngle()))
         .whileFalse(armSubsys.stopArmAngle());
 
     // Move in frame
