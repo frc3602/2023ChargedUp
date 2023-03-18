@@ -38,7 +38,7 @@ public class RobotContainer {
         new TeleopSwerve(s_Swerve,
         () -> controllerPolarity.getSelected() * driver.getRawAxis(translationAxis) * slowDown,
         () -> controllerPolarity.getSelected() * driver.getRawAxis(strafeAxis) * slowDown,
-        () -> controllerPolarity.getSelected() * driver.getRawAxis(rotationAxis) * slowDown,
+        () -> -driver.getRawAxis(rotationAxis) * slowDown,
         () -> robotOriented.getAsBoolean())); // false = field
                                               // true = robot
     configureButtonBindings();
@@ -57,15 +57,15 @@ public class RobotContainer {
 
     // Move down a bit
     armJoystick.povUp()
-        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -17))
-            .until(() -> armSubsys.checkArmAngle(armSubsys, -17)).andThen(armSubsys.stopArmAngle()))
+        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -20))
+            .until(() -> armSubsys.checkArmAngle(armSubsys, -20)).andThen(armSubsys.stopArmAngle()))
         .whileFalse(armSubsys.stopArmAngle());
 
     // Move in frame
     armJoystick.b().whileTrue(armSubsys.moveInFrame(armSubsys)).whileFalse(armSubsys.stopArm());
 
-    // Move to floor
-    armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
+    // Move to double substation
+    armJoystick.a().whileTrue(armSubsys.moveToSubstation(armSubsys)).whileFalse(armSubsys.stopArm());
 
     // Move to mid
     armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());

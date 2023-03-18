@@ -90,7 +90,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean checkArmAngle(ArmSubsystem armSubsys, double armAngle) {
-    if (MathBruh.between(armSubsys.getArmAngleEncoder(), armAngle - 5.0, armAngle + 5.0)) {
+    if (MathBruh.between(armSubsys.getArmAngleEncoder(), armAngle - 3.0, armAngle + 3.0)) {
       return true;
     } else {
       return false;
@@ -154,10 +154,10 @@ public class ArmSubsystem extends SubsystemBase {
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
 
-  public CommandBase moveToLow(ArmSubsystem armSubsys) {
-    var armAngle = -63.0;
+  public CommandBase moveToSubstation(ArmSubsystem armSubsys) {
+    var armAngle = -7.0;
     var extendInches = 0.0;
-    var wristAngle = 115.0;
+    var wristAngle = 48.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
         .until(() -> armSubsys.checkAllArm(armSubsys, armAngle, extendInches, wristAngle)).andThen(armSubsys.stopArm());
   }
