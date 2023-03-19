@@ -17,14 +17,14 @@ public class AutonCommands {
   public static CommandBase driveToBalance(Swerve driveSubsys) {
     return Commands.run(() -> {
       driveSubsys.drive(new Translation2d(0.75, 0.0), 0.0, false, false);
-    }, driveSubsys).until(() -> MathBruh.between(driveSubsys.getPitch().getDegrees(), 3, 10));
+    }, driveSubsys).until(() -> MathBruh.between(driveSubsys.getRoll().getDegrees(), 3, 10));
   }
 
   public static CommandBase driveBalance(Swerve driveSubsys) {
     PIDController pidController = new PIDController(0.3, 0, 0.0);
     return Commands.run(() -> {
       driveSubsys.drive(
-          new Translation2d(pidController.calculate(driveSubsys.getPitch().getDegrees() * 0.01),
+          new Translation2d(pidController.calculate(driveSubsys.getRoll().getDegrees() * 0.01),
               0.0),
           0.0, false, false);
     }, driveSubsys);
