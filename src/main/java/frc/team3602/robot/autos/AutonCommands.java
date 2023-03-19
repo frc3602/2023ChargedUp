@@ -11,7 +11,7 @@ public class AutonCommands {
   public static CommandBase driveOutCommunity(Swerve driveSubsys) {
     return Commands.run(() -> {
       driveSubsys.drive(new Translation2d(-0.75, 0.0), 0.0, false, false);
-    }, driveSubsys).withTimeout(6.5);
+    }, driveSubsys).withTimeout(7.5); // 6.5
   }
 
   public static CommandBase driveToBalance(Swerve driveSubsys) {
