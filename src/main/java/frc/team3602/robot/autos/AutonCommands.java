@@ -17,7 +17,7 @@ public class AutonCommands {
   public static CommandBase driveToBalance(Swerve driveSubsys) {
     return Commands.run(() -> {
       driveSubsys.drive(new Translation2d(0.75, 0.0), 0.0, false, false);
-    }, driveSubsys).until(() -> MathBruh.between(driveSubsys.getPitch().getDegrees(), 0, 10));
+    }, driveSubsys).until(() -> MathBruh.between(driveSubsys.getPitch().getDegrees(), 3, 10));
   }
 
   public static CommandBase driveBalance(Swerve driveSubsys) {
