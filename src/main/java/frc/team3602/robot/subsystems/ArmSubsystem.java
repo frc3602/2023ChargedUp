@@ -269,6 +269,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     armMotor.setInverted(true);
 
+    armMotor.burnFlash();
+    armExtendMotor.burnFlash();
+    armWristMotor.burnFlash();
+
     compressor.enableDigital();
     gripperSolenoid.set(Value.kOff);
 
