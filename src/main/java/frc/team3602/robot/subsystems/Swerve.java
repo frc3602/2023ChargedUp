@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team3602.lib.util.CANOptimization;
 import frc.team3602.robot.Constants;
@@ -118,6 +119,8 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     swerveOdometry.update(getYaw(), getModulePositions());
+
+    SmartDashboard.putNumber("Gyro Pitch", getPitch().getDegrees());
 
     // for (SwerveModule mod : mSwerveMods) {
     // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder",
