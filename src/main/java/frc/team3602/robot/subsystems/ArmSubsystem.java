@@ -211,8 +211,7 @@ public class ArmSubsystem extends SubsystemBase {
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
         AutonCommands.driveOutCommunity(swerveSubsys),
-        AutonCommands.driveToBalance(swerveSubsys),
-        AutonCommands.driveBalance(swerveSubsys));
+        AutonCommands.driveToBalance(swerveSubsys));
   }
 
   public CommandBase moveToHighBalanceAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
@@ -221,8 +220,7 @@ public class ArmSubsystem extends SubsystemBase {
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
         AutonCommands.driveOutCommunity(swerveSubsys),
-        AutonCommands.driveToBalance(swerveSubsys),
-        AutonCommands.driveBalance(swerveSubsys));
+        AutonCommands.driveToBalance(swerveSubsys));
   }
 
   public CommandBase stopArm() {
