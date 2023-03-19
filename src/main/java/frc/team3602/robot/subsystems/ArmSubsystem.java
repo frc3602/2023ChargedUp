@@ -205,6 +205,26 @@ public class ArmSubsystem extends SubsystemBase {
         AutonCommands.driveOutCommunity(swerveSubsys));
   }
 
+    public CommandBase moveToMidBalanceAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
+    return new SequentialCommandGroup(
+        armSubsys.moveToMid(armSubsys),
+        openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
+        Commands.waitSeconds(0.5),
+        AutonCommands.driveOutCommunity(swerveSubsys),
+        AutonCommands.driveToBalance(swerveSubsys),
+        AutonCommands.driveBalance(swerveSubsys));
+  }
+
+  public CommandBase moveToHighBalanceAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
+    return new SequentialCommandGroup(
+        armSubsys.moveToHigh(armSubsys),
+        openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
+        Commands.waitSeconds(0.5),
+        AutonCommands.driveOutCommunity(swerveSubsys),
+        AutonCommands.driveToBalance(swerveSubsys),
+        AutonCommands.driveBalance(swerveSubsys));
+  }
+
   public CommandBase stopArm() {
     return runOnce(() -> {
       armMotor.set(0.0);
