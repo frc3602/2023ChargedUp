@@ -194,6 +194,7 @@ public class ArmSubsystem extends SubsystemBase {
         armSubsys.moveToMid(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
+        armSubsys.moveInFrame(armSubsys),
         AutonCommands.driveOutCommunity(swerveSubsys));
   }
 
@@ -202,6 +203,7 @@ public class ArmSubsystem extends SubsystemBase {
         armSubsys.moveToHigh(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
+        armSubsys.moveInFrame(armSubsys),
         AutonCommands.driveOutCommunity(swerveSubsys));
   }
 
@@ -210,6 +212,7 @@ public class ArmSubsystem extends SubsystemBase {
         armSubsys.moveToMid(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
+        armSubsys.moveInFrame(armSubsys),
         AutonCommands.driveOutCommunity(swerveSubsys),
         AutonCommands.driveToBalance(swerveSubsys));
   }
@@ -219,6 +222,7 @@ public class ArmSubsystem extends SubsystemBase {
         armSubsys.moveToHigh(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
+        armSubsys.moveInFrame(armSubsys),
         AutonCommands.driveOutCommunity(swerveSubsys),
         AutonCommands.driveToBalance(swerveSubsys));
   }
