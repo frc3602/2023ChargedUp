@@ -11,13 +11,13 @@ public class AutonCommands {
 
   public static CommandBase driveOutCommunity(Swerve driveSubsys) {
     return Commands.run(() -> {
-      driveSubsys.drive(new Translation2d(-0.75, 0.0), 0.0, false, false);
-    }, driveSubsys).withTimeout(7.5); // 6.5
+      driveSubsys.drive(new Translation2d(-1.0, 0.0), 0.0, false, false); // 0.75 7.5
+    }, driveSubsys).withTimeout(6.5);
   }
 
   public static CommandBase driveToBalance(Swerve driveSubsys) {
     return Commands.run(() -> {
-      driveSubsys.drive(new Translation2d(0.75, 0.0), 0.0, false, false);
-    }, driveSubsys).withTimeout(4.0);
+      driveSubsys.drive(new Translation2d(1.0, 0.0), 0.0, false, false); // 0.75 4.0
+    }, driveSubsys).withTimeout(3.25);
   }
 }
