@@ -154,7 +154,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase moveToSub(ArmSubsystem armSubsys) {
-    var armAngle = -6.0;
+    var armAngle = -6.5;
     var extendInches = 0.0;
     var wristAngle = 65.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
