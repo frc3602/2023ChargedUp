@@ -18,6 +18,6 @@ public class AutonCommands {
   public static CommandBase driveToBalance(Swerve driveSubsys) {
     return Commands.run(() -> {
       driveSubsys.drive(new Translation2d(1.0, 0.0), 0.0, false, false); // 0.75 4.0
-    }, driveSubsys).withTimeout(3.75);
+    }, driveSubsys).withTimeout(3.90);
   }
 }
