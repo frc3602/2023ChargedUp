@@ -268,6 +268,8 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 1);
     armWristMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
     armWristMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 125);
+    armWristMotor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    armWristMotor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, -1);
 
     armMotor.setInverted(true);
 
