@@ -22,8 +22,7 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   SendableChooser<Double> controllerPolarity = new SendableChooser<>();
-  private final JoystickButton robotOriented =
-      new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton robotOriented = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
   private double slowDown = 1.0;
 
   /* Subsystems */
@@ -36,11 +35,11 @@ public class RobotContainer {
   public RobotContainer() {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(s_Swerve,
-        () -> controllerPolarity.getSelected() * driver.getRawAxis(translationAxis) * slowDown,
-        () -> controllerPolarity.getSelected() * driver.getRawAxis(strafeAxis) * slowDown,
-        () -> -driver.getRawAxis(rotationAxis) * slowDown,
-        () -> robotOriented.getAsBoolean())); // false = field
-                                              // true = robot
+            () -> controllerPolarity.getSelected() * driver.getRawAxis(translationAxis) * slowDown,
+            () -> controllerPolarity.getSelected() * driver.getRawAxis(strafeAxis) * slowDown,
+            () -> -driver.getRawAxis(rotationAxis) * slowDown,
+            () -> robotOriented.getAsBoolean())); // false = field
+                                                  // true = robot
     configureButtonBindings();
     configAuton();
 
@@ -57,8 +56,8 @@ public class RobotContainer {
 
     // Move down a bit
     armJoystick.povUp()
-        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -25))
-            .until(() -> armSubsys.checkArmAngle(armSubsys, -25)).andThen(armSubsys.stopArmAngle()))
+        .whileTrue(armSubsys.run(() -> armSubsys.moveArmAngle(() -> -22))
+            .until(() -> armSubsys.checkArmAngle(armSubsys, -22)).andThen(armSubsys.stopArmAngle()))
         .whileFalse(armSubsys.stopArmAngle());
 
     // Move in frame
@@ -89,7 +88,7 @@ public class RobotContainer {
     sendableChooser.addOption("Single High Drive", armSubsys.moveToHighDriveAuton(armSubsys, s_Swerve));
     sendableChooser.addOption("Single Mid Drive Balance", armSubsys.moveToMidBalanceAuton(armSubsys, s_Swerve));
     sendableChooser.addOption("Single High Drive Balance", armSubsys.moveToHighBalanceAuton(armSubsys, s_Swerve));
-    
+
   }
 
   public Command getAutonomousCommand() {

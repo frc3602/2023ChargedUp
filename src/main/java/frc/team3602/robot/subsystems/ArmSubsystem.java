@@ -145,6 +145,12 @@ public class ArmSubsystem extends SubsystemBase {
     armSubsys.moveArmExtend(armExtendSup);
   }
 
+  public CommandBase moveDownForAuton(ArmSubsystem armSubsys) {
+    var armAngle = -25;
+    return run(() -> armSubsys.moveArmAngle(() -> armAngle)).until(() -> armSubsys.checkArmAngle(armSubsys, armAngle))
+        .andThen(armSubsys.stopArmAngle());
+  }
+
   public CommandBase moveInFrame(ArmSubsystem armSubsys) {
     var armAngle = -22;
     var extendInches = 0.0;
@@ -162,7 +168,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase moveToMid(ArmSubsystem armSubsys) {
-    var armAngle = -23.0;
+    var armAngle = -26.0; // -23.0
     var extendInches = 10.0;
     var wristAngle = 115.0;
     return run(() -> armSubsys.moveArm(armSubsys, () -> armAngle, () -> extendInches, () -> wristAngle))
@@ -185,8 +191,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   public CommandBase moveToHighAuton(ArmSubsystem armSubsys) {
     return new SequentialCommandGroup(
+        closeGripper().until(() -> gripperSolenoid.get() == Value.kReverse),
         armSubsys.moveToHigh(armSubsys),
-        openGripper().until(() -> gripperSolenoid.get() == Value.kForward));
+        armSubsys.moveDownForAuton(armSubsys),
+        openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
+        Commands.waitSeconds(0.5),
+        armSubsys.moveInFrame(armSubsys));
   }
 
   public CommandBase moveToMidDriveAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
@@ -200,26 +210,30 @@ public class ArmSubsystem extends SubsystemBase {
 
   public CommandBase moveToHighDriveAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
     return new SequentialCommandGroup(
+        closeGripper().until(() -> gripperSolenoid.get() == Value.kReverse),
         armSubsys.moveToHigh(armSubsys),
+        armSubsys.moveDownForAuton(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
         armSubsys.moveInFrame(armSubsys),
         AutonCommands.driveOutCommunity(swerveSubsys));
   }
 
-    public CommandBase moveToMidBalanceAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
+  public CommandBase moveToMidBalanceAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
     return new SequentialCommandGroup(
         armSubsys.moveToMid(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
         armSubsys.moveInFrame(armSubsys),
         AutonCommands.driveOutCommunity(swerveSubsys),
-        AutonCommands.driveToBalance(swerveSubsys));
+        AutonCommands.driveToBalance(swerveSubsys)); 
   }
 
   public CommandBase moveToHighBalanceAuton(ArmSubsystem armSubsys, Swerve swerveSubsys) {
     return new SequentialCommandGroup(
+        closeGripper().until(() -> gripperSolenoid.get() == Value.kReverse),
         armSubsys.moveToHigh(armSubsys),
+        armSubsys.moveDownForAuton(armSubsys),
         openGripper().until(() -> gripperSolenoid.get() == Value.kForward),
         Commands.waitSeconds(0.5),
         armSubsys.moveInFrame(armSubsys),
