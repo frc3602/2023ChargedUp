@@ -155,29 +155,4 @@ public final class Constants {
         new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularSpeedRadiansPerSecondSquared);
   }
-
-  public static final class ArmConstants {
-    public static final int armMotorCANID = 16;
-    public static final int armExtendCANID = 15;
-    public static final int armWristCANID = 14;
-
-    public static final double armZeroAngle = 0.0; // TODO: Set zero angle later.
-
-    public static final double armAngleGearRatio = (1338.84 / 1.0);
-    public static final double armExtendGearRatio = (60.0 / 1.0);
-    public static final double armWristGearRatio = (400.0 / 1.0);
-
-    public static final double armAngleP = 0.90;
-    public static final double armAngleI = 0.0;
-    public static final double armAngleD = 0.10;
-
-    public static final double armKS = 6.0;
-    public static final double armKG = 0.23; // 1.11
-    public static final double armKV = 26.09; // 6.89
-    public static final double armKA = 0.03; // 6.19
-
-    public static final double armExtendP = 0.50;
-    public static final double armExtendI = 0.0;
-    public static final double armExtendD = 0.0;
-  }
 }

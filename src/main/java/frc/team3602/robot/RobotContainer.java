@@ -21,7 +21,6 @@ public class RobotContainer {
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
-  private final ArmSubsystem armSubsys = new ArmSubsystem();
 
   /* Autonomous */
   SendableChooser<Command> sendableChooser = new SendableChooser<>();
@@ -30,32 +29,11 @@ public class RobotContainer {
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> -driver.getRawAxis(translationAxis),
         () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> false)); // false = field
                                                                                                      // true = robot
-    configureButtonBindings();
     configAuton();
-  }
-
-  private void configureButtonBindings() {
-    // Move to floor
-    armJoystick.a().whileTrue(armSubsys.moveToLow(armSubsys)).whileFalse(armSubsys.stopArm());
-
-    // Move to mid
-    armJoystick.x().whileTrue(armSubsys.moveToMid(armSubsys)).whileFalse(armSubsys.stopArm());
-
-    // Move to high
-    armJoystick.y().whileTrue(armSubsys.moveToHigh(armSubsys)).whileFalse(armSubsys.stopArm());
-
-    // Open gripper
-    armJoystick.leftBumper().whileTrue(armSubsys.openGripper());
-
-    // Close gripper
-    armJoystick.rightBumper().whileTrue(armSubsys.closeGripper());
   }
 
   private void configAuton() {
     SmartDashboard.putData(sendableChooser);
-
-    sendableChooser.addOption("Single Piece Mid", armSubsys.moveToMidAuton(armSubsys));
-    sendableChooser.addOption("Single Piece High", armSubsys.moveToHighAuton(armSubsys));
   }
 
   public Command getAutonomousCommand() {
